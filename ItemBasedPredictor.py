@@ -17,7 +17,6 @@ class ItemBasedPredictor:
 
         movie_ids = self.data['movieID'].unique()
 
-        self.data.set_index('userID', inplace=True)
         self.movie_data_groups = self.data.groupby(['movieID'])
         self.user_rating_averages = self.data.groupby(['userID'])['rating'].mean()
 
@@ -29,18 +28,27 @@ class ItemBasedPredictor:
         })
 
     def predict(self, user_id: int, n: int = 10, rec_seen: bool = True):
-        
-        test_id = 296
-        
-        test_something = self.similarities.loc[(self.similarities.index == test_id)].to_dict()
+        rating_group = self.data.groupby(['userID']).get_group(user_id).set_index('movieID')
 
-        print(test_something)
+        movie_ids = self.data['movieID'].unique()
 
-        return
+        output = {}
+
+        for movie_id in movie_ids:
+            similarities = self.similarities[self.similarities[movie_id] > 0][movie_id].to_frame()
+            similarities = similarities.join(rating_group, how='inner')
+
+            if len(similarities) > 0:
+                output[movie_id] = sum(similarities[movie_id] * similarities['rating']) / sum(abs(similarities[movie_id]))
+
+        return output
 
     def similarity(self, movie_id_1: int, movie_id_2: int):
-        movie_1_group = self.movie_data_groups.get_group(movie_id_1)
-        movie_2_group = self.movie_data_groups.get_group(movie_id_2)
+        if movie_id_1 == movie_id_2:
+            return 0
+
+        movie_1_group = self.movie_data_groups.get_group(movie_id_1).set_index('userID')
+        movie_2_group = self.movie_data_groups.get_group(movie_id_2).set_index('userID')
         movie_both_group = movie_1_group.join(movie_2_group, lsuffix='_1', rsuffix='_2', on='userID', how='inner')
 
         if len(movie_both_group) < self.min_values:
