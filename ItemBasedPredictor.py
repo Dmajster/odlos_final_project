@@ -52,8 +52,6 @@ class ItemBasedPredictor:
         movie_2_group = self.movie_data_groups.get_group(movie_id_2).set_index('userID')
         movie_both_group = movie_1_group.join(movie_2_group, lsuffix='_1', rsuffix='_2', on='userID', how='inner')
 
-        print(movie_both_group)
-
         if len(movie_both_group) < self.min_values:
             return 0
 

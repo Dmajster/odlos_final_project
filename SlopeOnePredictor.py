@@ -1,4 +1,6 @@
 from UserItemData import UserItemData
+import numpy
+import pandas
 
 from timeit import default_timer as timer
 
@@ -13,7 +15,7 @@ class SlopeOnePredictor:
 
     def predict_one(self, user_id: int, movie_id: int):
         ru = self.movie_user_groups.get_group(user_id)
-        ru = ru.drop(ru[ru['movieID'] == movie_id].index)
+        
         dev = ru.apply(lambda row: self.dev(movie_id, row['movieID']), axis=1)
 
         return sum(dev + ru['rating']) / len(ru)
@@ -22,11 +24,9 @@ class SlopeOnePredictor:
         output = {}
 
         movie_ids = self.data['movieID'].unique()
-        start = timer()
+
         for movie_id in movie_ids:
             output[movie_id] = self.predict_one(user_id, movie_id)
-        end = timer()
-        print(end - start)
 
         return output
 
