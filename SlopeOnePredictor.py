@@ -1,5 +1,6 @@
 from UserItemData import UserItemData
 
+from timeit import default_timer as timer
 
 class SlopeOnePredictor:
     def __init__(self):
@@ -21,9 +22,11 @@ class SlopeOnePredictor:
         output = {}
 
         movie_ids = self.data['movieID'].unique()
-
+        start = timer()
         for movie_id in movie_ids:
             output[movie_id] = self.predict_one(user_id, movie_id)
+        end = timer()
+        print(end - start)
 
         return output
 

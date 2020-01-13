@@ -4,9 +4,6 @@ from math import sqrt
 
 import pandas
 
-from timeit import default_timer as timer
-
-
 class ItemBasedPredictor:
     def __init__(self, min_values: int = 0, threshold: float = 0):
         self.min_values = min_values
@@ -54,6 +51,8 @@ class ItemBasedPredictor:
         movie_1_group = self.movie_data_groups.get_group(movie_id_1).set_index('userID')
         movie_2_group = self.movie_data_groups.get_group(movie_id_2).set_index('userID')
         movie_both_group = movie_1_group.join(movie_2_group, lsuffix='_1', rsuffix='_2', on='userID', how='inner')
+
+        print(movie_both_group)
 
         if len(movie_both_group) < self.min_values:
             return 0

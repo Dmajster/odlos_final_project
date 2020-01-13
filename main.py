@@ -54,11 +54,12 @@ from UserItemData import UserItemData
 from SlopeOnePredictor import SlopeOnePredictor
 from ItemBasedPredictor import ItemBasedPredictor
 from AveragePredictor import AveragePredictor
+from RandomPredictor import RandomPredictor
 from Recommender import Recommender
 
 md = MovieData('data/movies.dat')
 uim = UserItemData('data/user_ratedmovies.dat', min_ratings=1000, to_date='1.1.2008')
-rp = AveragePredictor(100)
+rp = SlopeOnePredictor()
 rec = Recommender(rp)
 rec.fit(uim)
 
