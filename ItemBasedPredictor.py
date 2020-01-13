@@ -64,3 +64,8 @@ class ItemBasedPredictor:
             return 0
 
         return simmilarity
+
+    def similarItems(self, movie_id: int, n):
+        simmilar_movies = self.similarities[movie_id].sort_values(ascending=False)[:n]
+
+        return { key: value for key, value in simmilar_movies.items() }
