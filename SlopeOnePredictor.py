@@ -15,9 +15,9 @@ class SlopeOnePredictor:
         ru = ru.drop(ru[ru['movieID'] == movie_id].index)
         dev = ru.apply(lambda row: self.dev(movie_id, row['movieID']), axis=1)
 
-        return sum(dev + ru['rating']) / (len(ru)+1)
+        return sum(dev + ru['rating']) / len(ru)
 
-    def predict(self, user_id: int, n: int = 10, rec_seen: bool = True):
+    def predict(self, user_id: int, n: int = 10):
         output = {}
 
         movie_ids = self.data['movieID'].unique()

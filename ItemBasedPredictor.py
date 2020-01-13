@@ -18,6 +18,7 @@ class ItemBasedPredictor:
         movie_ids = self.data['movieID'].unique()
 
         self.movie_data_groups = self.data.groupby(['movieID'])
+        self.user_data_groups = self.data.groupby(['userID'])
         self.user_rating_averages = self.data.groupby(['userID'])['rating'].mean()
 
         self.similarities = pandas.DataFrame({ 
@@ -27,8 +28,11 @@ class ItemBasedPredictor:
             for movie_id_1 in movie_ids 
         })
 
-    def predict(self, user_id: int, n: int = 10, rec_seen: bool = True):
-        rating_group = self.data.groupby(['userID']).get_group(user_id).set_index('movieID')
+    def predict(self, user_id: int, n: int = 10):
+        if user_id not in self.user_data_groups.groups.keys():
+            return
+
+        rating_group = self.user_data_groups.get_group(user_id).set_index('movieID')
 
         movie_ids = self.data['movieID'].unique()
 
